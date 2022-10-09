@@ -156,3 +156,4 @@ for dir in list:
         FuzzThread.start()
     except KeyboardInterrupt:  # If user presses CTRL+C it will print "Stopped fuzzing."
         print('    Stopped fuzzing.')
+        exit()
