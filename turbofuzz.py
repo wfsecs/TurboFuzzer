@@ -3,6 +3,7 @@ from colorama import Fore, init
 import random
 import requests
 import threading
+from urllib.parse import urlparse
 init()
 
 
@@ -102,6 +103,10 @@ print(f'''{C_BLU}
 input_url = input('   URL: ')
 dir_file = input('   List for fuzzing: ')
 
+# Gets domain name from the url.
+domain = urlparse(input_url).netloc
+save_to = f'tf_found/{domain}.txt'
+
 # Reads the txt file and adds them into a list.
 with open(dir_file) as f:
     content_list = f.readlines()
@@ -117,25 +122,37 @@ def fuzz(url):
 
     if status_code in Green_codes:
         print(f'    {C_LGRE}[+]{C_RESET} {url} {C_GRE}[{status_code}/{meaning}]{C_RESET}')
+        f = open(save_to, "a+")
+        f.write(f'{url} [{status_code}/{meaning}]\n')
+        f.close()
 
     elif status_code in Red_codes:
         print(f'    {C_LRED}[+]{C_LBLA} {url} {C_LRED}[{status_code}/{meaning}]{C_RESET}')
 
     elif status_code in LRED_codes:
         print(f'    {C_RED}[+]{C_RESET} {url} {C_RED}[{status_code}/{meaning}]{C_RESET}')
+        f = open(save_to, "a+")
+        f.write(f'{url} [{status_code}/{meaning}]\n')
+        f.close()
 
     elif status_code in Yellow_codes:
         print(f'    {C_LYEL}[+]{C_RESET} {url} {C_YEL}[{status_code}/{meaning}]{C_RESET}')
+        f = open(save_to, "a+")
+        f.write(f'{url} [{status_code}/{meaning}]\n')
+        f.close()
 
     else:
         print(f'    {C_YEL}[+]{C_CYA} {url} {C_YEL}[{status_code}/{meaning}]{C_RESET}')
+        f = open(save_to, "a+")
+        f.write(f'{url} [{status_code}/{meaning}]\n')
+        f.close()
 
 
 for dir in list:
     try:
         url = f'{input_url}{dir}'
         FuzzThread = threading.Thread(target=fuzz, args=(url,), daemon=True)  # Starts the fuzzing thread.
-        time.sleep(0.04)
+        time.sleep(0.15)
         FuzzThread.start()
     except KeyboardInterrupt:  # If user presses CTRL+C it will print "Stopped fuzzing."
         print('    Stopped fuzzing.')
